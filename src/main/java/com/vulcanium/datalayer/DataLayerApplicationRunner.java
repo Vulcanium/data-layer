@@ -27,6 +27,7 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         displayAllEntities();
         displayEntityById();
+        displayEntityProductByIdWithComments();
     }
 
     private void displayAllEntities() {
@@ -72,6 +73,19 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
                 comment -> System.out.println("Comment: " + comment.getContent()),
                 () -> System.out.println("Comment not found")
         );
+    }
 
+    private void displayEntityProductByIdWithComments() {
+
+        System.out.println("-----------------------------");
+
+        Optional<Product> optionalProduct = productService.getProductById(ENTITY_ID);
+        optionalProduct.ifPresentOrElse(
+                product -> {
+                    System.out.println("Product " + product.getName() + " with comments:");
+                    product.getComments().forEach(comment -> System.out.println(comment.getContent()));
+                },
+                () -> System.out.println("Product with comments not found")
+        );
     }
 }

@@ -1,9 +1,22 @@
 package com.vulcanium.datalayer.repository;
 
 import com.vulcanium.datalayer.model.Product;
+import org.jspecify.annotations.NullMarked;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
+
+    @Override
+    @NullMarked
+    @EntityGraph(attributePaths = {"comments"})
+    List<Product> findAll();
+
+    @EntityGraph(attributePaths = {"comments"})
+    Optional<Product> findById(int id);
 }
