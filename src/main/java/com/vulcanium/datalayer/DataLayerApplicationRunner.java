@@ -28,6 +28,9 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
         displayAllEntities();
         displayEntityById();
         displayEntityProductByIdWithComments();
+        displayEntityCommentByIdWithProduct();
+        displayEntityProductByIdWithCategories();
+        displayEntityCategoryByIdWithProducts();
     }
 
     private void displayAllEntities() {
@@ -86,6 +89,48 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
                     product.getComments().forEach(comment -> System.out.println(comment.getContent()));
                 },
                 () -> System.out.println("Product with comments not found")
+        );
+    }
+
+    private void displayEntityCommentByIdWithProduct() {
+
+        System.out.println("-----------------------------");
+
+        Comment comment = commentService.getCommentWithAssociatedProduct(ENTITY_ID);
+
+        if (comment != null) {
+            System.out.println("Comment " + comment.getContent() + " with product:");
+            System.out.println(comment.getProduct().getName());
+        } else {
+            System.out.println("Comment with product not found");
+        }
+    }
+
+    private void displayEntityProductByIdWithCategories() {
+
+        System.out.println("-----------------------------");
+
+        Optional<Product> optionalProduct = productService.getProductById(ENTITY_ID);
+        optionalProduct.ifPresentOrElse(
+                product -> {
+                    System.out.println("Product " + product.getName() + " with categories:");
+                    product.getCategories().forEach(category -> System.out.println(category.getName()));
+                },
+                () -> System.out.println("Product with categories not found")
+        );
+    }
+
+    private void displayEntityCategoryByIdWithProducts() {
+
+        System.out.println("-----------------------------");
+
+        Optional<Category> optionalCategory = categoryService.getCategoryById(ENTITY_ID);
+        optionalCategory.ifPresentOrElse(
+                category -> {
+                    System.out.println("Category " + category.getName() + " with products:");
+                    category.getProducts().forEach(product -> System.out.println(product.getName()));
+                },
+                () -> System.out.println("Category with products not found")
         );
     }
 }

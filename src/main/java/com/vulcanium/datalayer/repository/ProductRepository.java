@@ -14,9 +14,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Override
     @NullMarked
-    @EntityGraph(attributePaths = {"comments"})
+    @EntityGraph(attributePaths = {"comments", "categories"})
     List<Product> findAll();
 
-    @EntityGraph(attributePaths = {"comments"})
+    @EntityGraph(attributePaths = {"comments", "categories"})
     Optional<Product> findById(int id);
 }

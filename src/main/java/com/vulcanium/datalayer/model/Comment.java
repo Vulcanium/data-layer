@@ -18,4 +18,12 @@ public class Comment {
 
     @Setter
     private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    protected void changeProduct(Product product) {
+        this.product = product;
+    }
 }

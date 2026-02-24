@@ -11,16 +11,15 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class ProductService {
 
     private ProductRepository productRepository;
 
-    @Transactional(readOnly = true)
     public List<Product> getProducts() {
         return productRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     public Optional<Product> getProductById(int id) {
         return productRepository.findById(id);
     }

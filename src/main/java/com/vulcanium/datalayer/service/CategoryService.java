@@ -4,12 +4,14 @@ import com.vulcanium.datalayer.model.Category;
 import com.vulcanium.datalayer.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class CategoryService {
 
     private CategoryRepository categoryRepository;

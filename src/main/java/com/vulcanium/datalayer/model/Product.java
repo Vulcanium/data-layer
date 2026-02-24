@@ -1,13 +1,16 @@
 package com.vulcanium.datalayer.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Product {
 
@@ -25,11 +28,19 @@ public class Product {
     @Setter
     private int cost;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "product_id")
-    private final List<Comment> comments;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final Set<Comment> comments = new HashSet<>();
 
-    public Product() {
-        this.comments = new ArrayList<>();
+    @ManyToMany(mappedBy = "products")
+    private final Set<Category> categories = new HashSet<>();
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.changeProduct(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.changeProduct(null);
     }
 }
