@@ -25,12 +25,17 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
+        // Read data from database
         displayAllEntities();
         displayEntityById();
         displayEntityProductByIdWithComments();
         displayEntityCommentByIdWithProduct();
         displayEntityProductByIdWithCategories();
         displayEntityCategoryByIdWithProducts();
+
+        // Create data
+        createEntitiesWithTheirRelationships();
     }
 
     private void displayAllEntities() {
@@ -132,5 +137,37 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
                 },
                 () -> System.out.println("Category with products not found")
         );
+    }
+
+    private void createEntitiesWithTheirRelationships() {
+
+        System.out.println("-----------------------------");
+
+        // Create and persist the new category
+        Category category = new Category();
+        category.setName("Promotion");
+
+        category = categoryService.addCategory(category);
+
+        // Create and persist the new product associated with the new category
+        Product product = new Product();
+        product.setName("AssuranceUltime");
+        product.setDescription("Assurance auto qui couvre tout !");
+        product.setCost(1000);
+
+        category.addProduct(product);
+        product = productService.addProduct(product);
+
+        // Create and persist the new comment associated with the new product
+        Comment comment = new Comment();
+        comment.setContent("C'est vraiment la meilleure assurance du monde. Par contre, ça coûte cher...");
+
+        product.addComment(comment);
+        commentService.addComment(comment);
+
+        // Display all the relationships between the entities
+        System.out.println("Created category " + category.getCategoryId() + ": " + category.getName());
+        System.out.println("This category contains a product named: " + category.getProducts().getFirst().getName());
+        System.out.println("This product contains the following comment: " + product.getComments().iterator().next().getContent());
     }
 }

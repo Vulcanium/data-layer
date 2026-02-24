@@ -27,4 +27,8 @@ public class CommentService {
     public Comment getCommentWithAssociatedProduct(int id) {
         return commentRepository.findById(id).orElse(null);
     }
+
+    public Comment addComment(Comment comment) {
+        return commentRepository.save(comment);
+    }
 }
