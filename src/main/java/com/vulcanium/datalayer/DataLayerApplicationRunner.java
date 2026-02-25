@@ -6,7 +6,7 @@ import com.vulcanium.datalayer.model.Product;
 import com.vulcanium.datalayer.service.CategoryService;
 import com.vulcanium.datalayer.service.CommentService;
 import com.vulcanium.datalayer.service.ProductService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,19 +14,22 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DataLayerApplicationRunner implements CommandLineRunner {
 
     private final static int ENTITY_ID = 1;
 
-    private ProductService productService;
-    private CategoryService categoryService;
-    private CommentService commentService;
+    private final ProductService productService;
+    private final CategoryService categoryService;
+    private final CommentService commentService;
+
+    private int categoryIdToDelete = -1;
+    private int productIdToDelete = -1;
 
     @Override
     public void run(String... args) throws Exception {
 
-        // Read data from database
+        // Read entities from the database
         displayAllEntities();
         displayEntityById();
         displayEntityProductByIdWithComments();
@@ -34,8 +37,12 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
         displayEntityProductByIdWithCategories();
         displayEntityCategoryByIdWithProducts();
 
-        // Create data
+        // Create entities in the database
         createEntitiesWithTheirRelationships();
+
+        // Delete entities from the database
+        deleteEntityCategoryById();
+        deleteEntityProductById();
     }
 
     private void displayAllEntities() {
@@ -147,7 +154,7 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
         Category category = new Category();
         category.setName("Promotion");
 
-        category = categoryService.addCategory(category);
+        category = categoryService.saveCategory(category);
 
         // Create and persist the new product associated with the new category
         Product product = new Product();
@@ -156,18 +163,54 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
         product.setCost(1000);
 
         category.addProduct(product);
-        product = productService.addProduct(product);
+        product = productService.saveProduct(product);
 
         // Create and persist the new comment associated with the new product
         Comment comment = new Comment();
         comment.setContent("C'est vraiment la meilleure assurance du monde. Par contre, ça coûte cher...");
 
         product.addComment(comment);
-        commentService.addComment(comment);
+        comment = commentService.saveComment(comment);
 
         // Display all the relationships between the entities
         System.out.println("Created category " + category.getCategoryId() + ": " + category.getName());
         System.out.println("This category contains a product named: " + category.getProducts().getFirst().getName());
         System.out.println("This product contains the following comment: " + product.getComments().iterator().next().getContent());
+
+        // Set the IDs of the entities to be deleted from the database
+        categoryIdToDelete = category.getCategoryId();
+        productIdToDelete = product.getProductId();
+    }
+
+    private void deleteEntityCategoryById() {
+
+        System.out.println("-----------------------------");
+
+        if (categoryIdToDelete != -1) {
+            Category category = categoryService.getCategoryById(categoryIdToDelete).get();
+
+            category.getProducts().forEach(category::removeProduct);
+            categoryService.deleteCategory(categoryIdToDelete);
+
+            System.out.println("The category " + category.getName() + " (" + categoryIdToDelete + "): has been deleted");
+        } else {
+            System.out.println("Category to delete not found");
+        }
+    }
+
+    private void deleteEntityProductById() {
+
+        System.out.println("-----------------------------");
+
+        if (productIdToDelete != -1) {
+            Product product = productService.getProductById(productIdToDelete).get();
+
+            product.getComments().forEach(product::removeComment);
+            productService.deleteProduct(productIdToDelete);
+
+            System.out.println("The product " + product.getName() + " (" + productIdToDelete + "): has been deleted");
+        } else {
+            System.out.println("Product to delete not found");
+        }
     }
 }
