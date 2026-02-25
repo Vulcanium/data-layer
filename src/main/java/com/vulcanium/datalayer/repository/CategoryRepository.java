@@ -19,4 +19,10 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @EntityGraph(attributePaths = {"products"})
     Optional<Category> findById(int id);
+
+    @EntityGraph(attributePaths = {"products"})
+    List<Category> findByName(String name);
+
+    @EntityGraph(attributePaths = {"products"})
+    List<Category> findByProductsName(String productName);
 }

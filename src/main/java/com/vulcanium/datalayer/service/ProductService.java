@@ -24,6 +24,18 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
+    public List<Product> getProductsByName(String name) {
+        return productRepository.findByName(name);
+    }
+
+    public List<Product> getProductsByCategoryName(String categoryName) {
+        return productRepository.findByCategoriesName(categoryName);
+    }
+
+    public List<Product> getProductsByCostLessThan(int cost) {
+        return productRepository.findByCostLessThan(cost);
+    }
+
     public Product saveProduct(Product product) {
         return productRepository.save(product);
     }

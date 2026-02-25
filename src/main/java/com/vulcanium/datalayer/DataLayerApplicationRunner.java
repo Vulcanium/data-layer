@@ -18,6 +18,9 @@ import java.util.Optional;
 public class DataLayerApplicationRunner implements CommandLineRunner {
 
     private final static int ENTITY_ID = 1;
+    private final static String ENTITY_PRODUCT_NAME = "AssuranceTousRisques";
+    private final static String ENTITY_CATEGORY_NAME = "Standard";
+    private final static String ENTITY_COMMENT_CONTENT = "Assurance";
 
     private final ProductService productService;
     private final CategoryService categoryService;
@@ -36,6 +39,12 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
         displayEntityCommentByIdWithProduct();
         displayEntityProductByIdWithCategories();
         displayEntityCategoryByIdWithProducts();
+        displayEntitiesProductByName();
+        displayEntitiesProductByCategoryName();
+        displayEntitiesProductByCostLessThan();
+        displayEntitiesCategoryByName();
+        displayEntitiesCategoryByProductName();
+        displayEntitiesCommentByContent();
 
         // Create entities in the database
         createEntitiesWithTheirRelationships();
@@ -146,6 +155,54 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
         );
     }
 
+    private void displayEntitiesProductByName() {
+
+        System.out.println("-----------------------------");
+
+        List<Product> products = productService.getProductsByName(ENTITY_PRODUCT_NAME);
+        products.forEach(product -> System.out.println("Product " + ENTITY_PRODUCT_NAME + " has the following ID: " + product.getProductId()));
+    }
+
+    private void displayEntitiesProductByCategoryName() {
+
+        System.out.println("-----------------------------");
+
+        List<Product> products = productService.getProductsByCategoryName(ENTITY_CATEGORY_NAME);
+        products.forEach(product -> System.out.println("Product " + product.getName() + " is included in the category: " + ENTITY_CATEGORY_NAME));
+    }
+
+    private void displayEntitiesProductByCostLessThan() {
+
+        System.out.println("-----------------------------");
+
+        List<Product> products = productService.getProductsByCostLessThan(1000);
+        products.forEach(product -> System.out.println("Product " + product.getName() + " has the following cost (< 1000€): " + product.getCost() + "€"));
+    }
+
+    private void displayEntitiesCategoryByName() {
+
+        System.out.println("-----------------------------");
+
+        List<Category> categories = categoryService.getCategoriesByName(ENTITY_CATEGORY_NAME);
+        categories.forEach(category -> System.out.println("Category " + ENTITY_CATEGORY_NAME + " has the following ID: " + category.getCategoryId()));
+    }
+
+    private void displayEntitiesCategoryByProductName() {
+
+        System.out.println("-----------------------------");
+
+        List<Category> categories = categoryService.getCategoriesByProductName(ENTITY_PRODUCT_NAME);
+        categories.forEach(category -> System.out.println("Category " + category.getName() + " is included in the product: " + ENTITY_PRODUCT_NAME));
+    }
+
+    private void displayEntitiesCommentByContent() {
+
+        System.out.println("-----------------------------");
+
+        List<Comment> comments = commentService.getCommentsContaining(ENTITY_COMMENT_CONTENT);
+        comments.forEach(comment -> System.out.println("Comment containing the word " + ENTITY_COMMENT_CONTENT + ": " + comment.getContent()));
+    }
+
     private void createEntitiesWithTheirRelationships() {
 
         System.out.println("-----------------------------");
@@ -160,7 +217,7 @@ public class DataLayerApplicationRunner implements CommandLineRunner {
         Product product = new Product();
         product.setName("AssuranceUltime");
         product.setDescription("Assurance auto qui couvre tout !");
-        product.setCost(1000);
+        product.setCost(2000);
 
         category.addProduct(product);
         product = productService.saveProduct(product);

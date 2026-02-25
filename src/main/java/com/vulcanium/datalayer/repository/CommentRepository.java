@@ -19,4 +19,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     @EntityGraph(attributePaths = {"product"})
     Optional<Comment> findById(int id);
+
+    @EntityGraph(attributePaths = {"product"})
+    List<Comment> findByContentContaining(String content);
 }

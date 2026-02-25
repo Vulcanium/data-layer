@@ -19,4 +19,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @EntityGraph(attributePaths = {"comments", "categories"})
     Optional<Product> findById(int id);
+
+    @EntityGraph(attributePaths = {"comments", "categories"})
+    List<Product> findByName(String name);
+
+    @EntityGraph(attributePaths = {"comments", "categories"})
+    List<Product> findByCategoriesName(String categoryName);
+
+    @EntityGraph(attributePaths = {"comments", "categories"})
+    List<Product> findByCostLessThan(int cost);
 }

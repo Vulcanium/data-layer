@@ -28,6 +28,10 @@ public class CommentService {
         return commentRepository.findById(id).orElse(null);
     }
 
+    public List<Comment> getCommentsContaining(String content) {
+        return commentRepository.findByContentContaining(content);
+    }
+
     public Comment saveComment(Comment comment) {
         return commentRepository.save(comment);
     }
